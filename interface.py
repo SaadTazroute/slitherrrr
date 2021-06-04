@@ -1,15 +1,13 @@
 from fltk import *
-from utilities import *
-import os
-dimentions = [400, 400]
+import fltk
 
 
-
-#indices = chargegrille('grille1.txt')
-
-indices =[[0]*8]*8
+#dimentions = [400, 600]
+#h = int(dimentions[0]/50)
+#l = int(dimentions[1]/50)
 
 ax = {}
+ay = {}
 etat = {}
 
 def libre(etat,segment) :
@@ -23,6 +21,7 @@ def est_interdit(etat,segment) :
 
 
 def arete(pt1, pt2, couleure="black", tag=""):
+
     if pt1[0] != pt2[0] and pt1[1] != pt2[1]:
         return
     #add condition sur
@@ -33,21 +32,26 @@ def arete(pt1, pt2, couleure="black", tag=""):
 
 
 if __name__ == "__main__":
-    cree_fenetre(400, 400)
-    for i in range(int(dimentions[0] / 50)+1):
+    l = int(input("largeur : "))
+    h = int(input("hauteur : "))
+    dimentions = [l * 50, h * 50]
+    #hna koun ghi tzid dik la partie read text
+    #bach yloadi l indices
+    #khass tkoun l matrice f nfss dim li dkhlna f l w h
+    indices = [[1] * l] * h
+    cree_fenetre(dimentions[0]+50, dimentions[1]+50)
+    for i in range(int(dimentions[0] / 50)):
         ax[i] = i * 50
-
-    for i in range(int(dimentions[0] / 50)+1):
-        for j in range(int(dimentions[0] / 50) + 1):
-            cercle(ax[i], ax[j], 3, remplissage="red")
-            if i <8 and j<8:
-                texte(ax[i]+20, ax[j]+10, str(indices[i][j]), taille=17)
-
-    arete([2, 3], [2, 4], tag="test")
-
-    arete([3, 3], [3, 4], tag="test")
-    attend_ev()
-    efface("test")
+    for j in range(int(dimentions[1] / 50)):
+        ay[j] = j * 50
+    for i in range(int(dimentions[0] / 50)):
+        for j in range(int(dimentions[1] / 50)):
+            cercle(ax[i]+50, ay[j]+50, 3, remplissage="red")
+            if i <((dimentions[0]/50)-1) and j<((dimentions[1]/50)-1):
+                try :
+                    texte(ax[i]+20+50, ay[j]+10+50, str(indices[j][i]), taille=17)
+                except:
+                    print("fdf")
     attend_ev()
 
     while True:
@@ -60,10 +64,11 @@ if __name__ == "__main__":
             print('Appui sur la touche', touche(ev))
 
         elif tev == "ClicDroit":
+            # need to add a condition to stay in the game field(la brkto 3liiiimn ga3 wla 3liisr ga3 wakha machi bin 2 points rah ayrsmolk)
             if abscisse(ev) % 50 <=3:
                 if libre(etat, ((int((abscisse(ev)+3)/50), int((ordonnee(ev))/50)), (int((abscisse(ev)+3)/50), int((ordonnee(ev))/50) + 1))):
                     arete([int((abscisse(ev)+3)/50), int((ordonnee(ev))/50)],
-                          [int((abscisse(ev)+3)/50), int((ordonnee(ev))/50) + 1], "blue")
+                          [int((abscisse(ev)+3)/50), int((ordonnee(ev))/50) + 1], "black")
                     etat[((int((abscisse(ev)+3)/50), int((ordonnee(ev))/50)),
                           (int((abscisse(ev)+3)/50), int((ordonnee(ev))/50) + 1))] = 1
                     print(etat)
@@ -71,11 +76,11 @@ if __name__ == "__main__":
                     pt1_eff=[int((abscisse(ev) + 3) / 50), int((ordonnee(ev)) / 50)]
                     pt2_eff=[int((abscisse(ev) + 3) / 50) , int((ordonnee(ev)) / 50) + 1]
                     efface("({},{}),({},{})".format(pt1_eff[0],pt1_eff[1],pt2_eff[0], pt2_eff[1]))
-                    mise_a_jour()
-                    print("effacé")
                     print("({},{}),({},{})".format(pt1_eff[0],pt1_eff[1],pt2_eff[0], pt2_eff[1]))
                     del etat[((int((abscisse(ev)+3)/50), int((ordonnee(ev))/50)), (int((abscisse(ev)+3)/50), int((ordonnee(ev))/50) + 1))]
                     print(etat)
+                    print("effacé")
+                    mise_a_jour()
             if ordonnee(ev) % 50 <= 3:
                 if libre(etat, ((int((abscisse(ev)) / 50), int((ordonnee(ev) + 3) / 50)),
                                 (int((abscisse(ev)) / 50) + 1, int((ordonnee(ev) + 3) / 50)))):
